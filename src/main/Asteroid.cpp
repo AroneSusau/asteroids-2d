@@ -21,8 +21,7 @@ static int shoulder = 0, elbow = 0;
 
 void init(void) 
 {
-  glClearColor (0.0, 0.0, 0.0, 0.0);
-  glShadeModel (GL_FLAT);
+  
 }
 
 void display(void)
@@ -43,6 +42,7 @@ void reshape (int w, int h)
 {
    glViewport(0, 0, w, h); 
    glMatrixMode(GL_PROJECTION);
+   glOrtho(0.0, w, 0.0, h, -1.0, 1.0);
    glLoadIdentity();
    glMatrixMode(GL_MODELVIEW);
    glLoadIdentity();

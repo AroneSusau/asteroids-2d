@@ -1,96 +1,70 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdbool.h>
-#include <math.h>
+#include "../headers/AsteroidGame.h"
+#include "../headers/classes/GraphicsRenderer.h"
 
-#if _WIN32
-# include <windows.h>
-#endif
-#if __APPLE__
-# include <OpenGL/gl.h>
-# include <OpenGL/glu.h>
-# include <GLUT/glut.h>
-#else
-# include <GL/gl.h>
-# include <GL/glu.h>
-# include <GL/glut.h>
-#endif
+void AsteroidGame::init(int argc, char** argv) {
+  glutInit(&argc, argv);
+  glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+  glutCreateWindow(argv[0]);
+  glutFullScreen(); 
 
-static int shoulder = 0, elbow = 0;
+  glutIgnoreKeyRepeat(GLUT_KEY_REPEAT_OFF);
+  glutKeyboardFunc(AsteroidGame::on_key_press);
 
-void init(void) 
-{
-  
+  glutDisplayFunc(AsteroidGame::display);
+  glutReshapeFunc(AsteroidGame::on_reshape);
 }
 
-void display(void)
-{
-  int err;
-
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+void AsteroidGame::display() {
   
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
 
+  glLoadIdentity();
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  glColor3f(1.0, 1.0, 1.0);
+  glTranslatef(arena.width/2, arena.height/2, 0.0f);
+  glBegin(GL_LINE_LOOP);
+  glVertex2d(-arena.width/2 + 1, -arena.height/2 + 1);
+  glVertex2d(arena.width/2 - 1, -arena.height/2 + 1);
+  glVertex2d(arena.width/2 - 1, arena.height/2 - 1);
+  glVertex2d(-arena.width/2 + 1, arena.height/2 - 1);
+  glEnd();
+  glPopMatrix();
 
+  graphics.render(game_window);
+
+  int err;
   if ((err = glGetError()) != GL_NO_ERROR)
     fprintf(stderr, "Error: %s\n", gluErrorString(err));
 
   glutSwapBuffers();
 }
 
-void reshape (int w, int h)
-{
-   glViewport(0, 0, w, h); 
-   glMatrixMode(GL_PROJECTION);
-   glOrtho(0.0, w, 0.0, h, -1.0, 1.0);
-   glLoadIdentity();
-   glMatrixMode(GL_MODELVIEW);
-   glLoadIdentity();
+void AsteroidGame::on_reshape(int w, int h) {
+  
+  game_window.resize(w, h);
+  glViewport(0, 0, w, h);
+  // arena.resize(w, h);
+
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+
+  glOrtho(0.0, arena.width, 0.0, arena.height, -1, 1);
 }
 
-void special (int key, int x, int y)
-{
-  printf("%d\n", key);
+void AsteroidGame::on_key_press(unsigned char key, int x, int y) {
+  if (key == keys.escape) exit(EXIT_SUCCESS);
 }
 
-void keyboard (unsigned char key, int x, int y)
-{
-   switch (key) {
-      case 's':
-         shoulder = (shoulder + 5) % 360;
-         glutPostRedisplay();
-         break;
-      case 'S':
-         shoulder = (shoulder - 5) % 360;
-         glutPostRedisplay();
-         break;
-      case 'e':
-         elbow = (elbow + 5) % 360;
-         glutPostRedisplay();
-         break;
-      case 'E':
-         elbow = (elbow - 5) % 360;
-         glutPostRedisplay();
-         break;
-      case 27:
-         exit(0);
-         break;
-      default:
-         break;
-   }
-}
+AsteroidGame::AsteroidGame(/* args */)
+{}
 
-int main(int argc, char** argv)
-{
-   glutInit(&argc, argv);
-   glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
-   glutCreateWindow (argv[0]);
-   glutFullScreen();
-   init();
-   glutDisplayFunc(display); 
-   glutReshapeFunc(reshape);
-   glutKeyboardUpFunc(keyboard);
-   glutSpecialUpFunc(special);
-   glutMainLoop();
-   return 0;
+AsteroidGame::~AsteroidGame()
+{}
+
+void AsteroidGame::run(int argc, char** argv) {
+  AsteroidGame::init(argc, argv);
+  glutMainLoop();
 }

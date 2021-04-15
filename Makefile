@@ -14,15 +14,14 @@ CC = g++
 CFLAGS = -Wall -std=$(VER)
 FRAMEWORK = -framework GLUT -framework OpenGL
 
-BASE_OBJECTS = Asteroid.o
+BASE_OBJECTS = main.o game_settings.o Asteroid.o GraphicsRenderer.o
 OBJECTS = $(addprefix out/, $(BASE_OBJECTS))
 
 .default: all
 
-all: Asteroid
-
-run:
-	make
+all:
+	make clean
+	make Asteroid
 	./Asteroid
 
 clean:
@@ -33,5 +32,5 @@ Asteroid: $(BASE_OBJECTS)
 	$(CC) $(CFLAGS) $(OBJECTS) -o Asteroid $(FRAMEWORK)
 
 %.o: %.cpp
-	$(CC) $(CFLAGS) -c $^ -o $(BUILDDIR)/$@ $(FRAMEWORK)
+	$(CC) $(CFLAGS) -c $^ -o $(BUILDDIR)/$@
 	

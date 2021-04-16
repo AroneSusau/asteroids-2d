@@ -1,7 +1,7 @@
 #ifndef H_GAME_SETTINGS
 #define H_GAME_SETTINGS
 
-static class arena_t {
+class arena_t {
   public:
     
     float width = 1500;
@@ -10,9 +10,9 @@ static class arena_t {
 
     void resize(float o_width, float o_height);
 
-} arena;
+};
 
-static class game_window_t {
+class game_window_t {
   public:
     
     float width = 0;
@@ -20,6 +20,6 @@ static class game_window_t {
 
     void resize(float width, float height);
     
-} game_window;
+};
 
 #endif

@@ -15,10 +15,14 @@ public:
 
   static void run(int argc, char** argv);
   static void init(int argc, char** argv);
+  static void init_game_objs();
 
   static void on_key_press(unsigned char key, int x, int y);
+  static void on_key_release(unsigned char key, int x, int y);
   static void on_reshape(int w, int h);
   
+  static void on_idle();
+
   static void display();
 };
 

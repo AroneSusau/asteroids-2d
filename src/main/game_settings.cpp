@@ -4,12 +4,13 @@
 
 void arena_t::resize(float o_width, float o_height) {
     
-  if (this->width > o_width * 0.9) {
-    this->width = o_width - (o_width * this->margin);
-  }
+  float o_aspect = o_width / o_height;
+  float aspect = this->width / this->height;
 
-  if (this->height > o_height * 0.9) {
-    this->height = o_height - (o_height * this->margin);
+  if (o_aspect >= aspect) {
+    this->width *= o_aspect/aspect;
+  } else {
+    this->height *= aspect/o_aspect;
   }
 
 }

@@ -2,15 +2,21 @@
 #define H_GRAPHICS_RENDERER
 
 #include "../standard.h"
-#include "../settings/player_settings.h"
+#include "./Util.h"
 #include "../settings/game_settings.h"
+#include "./Spaceship.h"
+#include "./Wall.h"
 
-static class GraphicsRenderer_t {
+class GraphicsRenderer_t {
   
   public:
   
-    void render(game_window_t game_window);
+    game_window_t game_window;
+    arena_t arena;
 
-} graphics;
+    void walls(Wall walls [4]);
+    void spaceship(spaceship_t spaceship);
+
+};
 
 #endif

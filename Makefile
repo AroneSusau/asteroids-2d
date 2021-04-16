@@ -11,10 +11,10 @@ else
 endif
 
 CC = g++
-CFLAGS = -Wall -std=$(VER)
+CFLAGS = -Wall -std=$(VER) -Wno-deprecated
 FRAMEWORK = -framework GLUT -framework OpenGL
 
-BASE_OBJECTS = main.o game_settings.o Asteroid.o GraphicsRenderer.o
+BASE_OBJECTS = main.o game_settings.o AsteroidGame.o GraphicsRenderer.o
 OBJECTS = $(addprefix out/, $(BASE_OBJECTS))
 
 .default: all

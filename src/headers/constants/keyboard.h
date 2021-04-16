@@ -3,7 +3,11 @@
 
 static class keyboard_t {
   public:
-    int escape = 27;
+    int ESC = 27;
+    const char W = 'w';
+    const char A = 'a';
+    const char S = 's';
+    const char D = 'd';
 } keys;
 
 #endif

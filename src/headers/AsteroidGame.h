@@ -21,7 +21,7 @@ class AsteroidGame {
     static void on_key_press(unsigned char key, int x, int y);
     static void on_key_release(unsigned char key, int x, int y);
     static void on_reshape(int w, int h);
-    
+
     static void on_idle();
 
     static void display();

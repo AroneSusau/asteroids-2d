@@ -22,13 +22,22 @@ class ParticleGenerator {
     float particle_lifetime = 1;
 
     // Characteristics
-    int spread = 0;
+    int spread_min = 0;
+    int spread_max = 0;
     float rate = 1;
     float density = 1;
+    float size = 1;
 
     // Position & Movement
     float x = 0;
     float y = 0;
+
+    float x_min = 0;
+    float x_max = 0;
+
+    float y_min = 0;
+    float y_max = 0;
+
     int dx_max = 2;
     int dx_min = 1;
     int dy_max = 2;

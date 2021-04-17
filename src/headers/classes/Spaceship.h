@@ -2,6 +2,7 @@
 #define H_SPACESHIP
 
 #include "./ParticleGenerator.h"
+#include "./../settings/game_settings.h"
 
 typedef enum { solid, wireframe } ship_fill;
 
@@ -48,12 +49,19 @@ static class spaceship_t {
       ship_flames.tag = ship_trail;
       ship_flames.duration_type = continuous;
       ship_flames.particle_lifetime = 0.07;
-      ship_flames.spread = 40;
+      ship_flames.spread_min = 0;
+      ship_flames.spread_max = 40;
       ship_flames.rate = 0.2;
       ship_flames.density = 6;
+      ship_flames.size = 6;
 
       ship_flames.x = x;
       ship_flames.y = y;
+
+      ship_flames.x_min = x;
+      ship_flames.x_max = 0;
+      ship_flames.y_min = y;
+      ship_flames.y_max = 0;
 
       ship_flames.dx_min = velocity_max;
       ship_flames.dx_max = velocity_max * 3;
@@ -64,7 +72,7 @@ static class spaceship_t {
 
       ship_flames.start_colour[0] = 1;
       ship_flames.start_colour[1] = 0;
-      ship_flames.start_colour[2] = 0.9;
+      ship_flames.start_colour[2] = 1;
 
       ship_flames.gradient_colour[0] = 1;
       ship_flames.gradient_colour[1] = 1;
@@ -73,6 +81,21 @@ static class spaceship_t {
       ship_flames.offset_x = -size/8;
 
       return ship_flames;
+    }
+
+    void reset(arena_t arena) {
+      
+      forward = false;
+      left = false;
+      right = false;
+
+      x = (rand() % (int) (arena.width / 4)) + arena.width/10;
+      y = (rand() % (int) (arena.height / 4)) + arena.width/10;
+
+      rotation = 45;
+
+      dx = 0;
+      dy = 0;      
     }
 
 } spaceship;

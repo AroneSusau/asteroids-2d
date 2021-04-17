@@ -4,6 +4,8 @@
 class arena_t {
   public:
     
+    bool in_bounds = true;
+
     float width = 1500;
     float height = 1500;
     float margin = 0.1;

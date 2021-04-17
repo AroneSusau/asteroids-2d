@@ -40,8 +40,13 @@ void AsteroidGame::on_idle() {
 
   physics.move_ship(spaceship);
   physics.ship_wall_warning(spaceship, walls, arena);
+  physics.ship_wall_collision(spaceship, arena);
 
   update_particle_generators(dt);
+
+  if (!arena.in_bounds) {
+    init_game_objs();
+  }
 
   glutPostRedisplay();
 }
@@ -53,7 +58,9 @@ void AsteroidGame::update_particle_generators(float dt) {
     if (generator.tag == ship_trail) {
       generator.active = spaceship.forward;
       generator.x = spaceship.x;
+      generator.x_min = spaceship.x;
       generator.y = spaceship.y;
+      generator.y_min = spaceship.y;
       generator.rotation = spaceship.rotation;
     }
 
@@ -72,16 +79,44 @@ void AsteroidGame::update_particle_generators(float dt) {
 
 void AsteroidGame::init_game_objs() {
 
+  spaceship.reset(arena);
+  particles_generators.clear();  
+  arena.in_bounds = true;
+
+  ParticleGenerator stars;
+
+  stars.active = true;
+  stars.duration_type = continuous;
+  stars.particle_lifetime = 20;
+  stars.spread_min = 90;
+  stars.spread_max = 90;
+  stars.rotation = 0;
+  stars.rate = 0.2;
+  stars.density = 3;
+  stars.size = 3;
+
+  stars.x = arena.width/2;
+  stars.y = arena.height/2;
+
+  stars.x_min = 0;
+  stars.y_min = arena.height;
+
+  stars.x_max = arena.width;
+  stars.y_max = arena.height;
+
+  stars.dx_min = 0;
+  stars.dx_max = 0;
+  stars.dy_min = 4;
+  stars.dy_max = 4;
+
+  particles_generators.push_back(stars);
+
   // Set initial time
   physics.time = glutGet(GLUT_ELAPSED_TIME) / 1000;
 
   // Set default variables for graphics renderer
   graphics.arena = arena;
   graphics.game_window = game_window;
-
-  // Spaceship starting position
-  spaceship.x = arena.width / 4;
-  spaceship.y = arena.height / 4;
 
   // Wall positions
   int padding = 8;
@@ -100,12 +135,12 @@ void AsteroidGame::display() {
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
-  graphics.walls(walls);
-  graphics.spaceship(spaceship);
-
   for (size_t i = 0; i < particles_generators.size(); ++i) {
     particles_generators.at(i).render();
   }
+
+  graphics.walls(walls);
+  graphics.spaceship(spaceship);
 
   int err;
   if ((err = glGetError()) != GL_NO_ERROR)

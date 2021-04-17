@@ -4,13 +4,14 @@ void ParticleGenerator::create_particle() {
   for (int i = 0; i < density; ++i) {
     Particle_t particle;
   
-    particle.x = x;
-    particle.y = y;
+    particle.x = util.random(x_min, x_max);
+    particle.y = util.random(y_min, y_max);
     particle.dx = util.random(dx_min, dx_max);
-    particle.dy = util.random(dx_min, dx_max);
+    particle.dy = util.random(dy_min, dy_max);
     particle.lifetime = particle_lifetime;
     particle.remaining = particle_lifetime;
-    particle.rotation = (rand() % spread) - spread/2;
+    particle.rotation = util.random(spread_min, spread_max) - spread_max/2;
+    particle.size = size;
     particle.colour[0] = start_colour[0];
     particle.colour[1] = start_colour[1];
     particle.colour[2] = start_colour[2];
@@ -32,6 +33,7 @@ void ParticleGenerator::movement(float dt) {
     } else {
       particle.x -= particle.dx * cosf(util.deg_to_rad(particle.rotation));
       particle.y -= particle.dy * sinf(util.deg_to_rad(particle.rotation));
+      particle.size *= 0.6; 
     }
   }
 }
@@ -80,7 +82,7 @@ void ParticleGenerator::render() {
     
     glColor3f(particle.colour[0], particle.colour[1], particle.colour[2]);
 
-    glPointSize(3);
+    glPointSize(particle.size);
     glBegin(GL_POINTS);
       glVertex2d(0, 0);
     glEnd();

@@ -72,3 +72,15 @@ void Physics_t::ship_wall_warning(spaceship_t &spaceship, Wall walls [4], arena_
     }
   }
 }
+
+void Physics_t::ship_wall_collision(spaceship_t &spaceship, arena_t &arena) {
+  
+  float left = spaceship.x - spaceship.bound_radius < 0;
+  float right = spaceship.x + spaceship.bound_radius > arena.width;
+  float top = spaceship.y + spaceship.bound_radius > arena.height;
+  float bot = spaceship.y + spaceship.bound_radius < 0;
+  
+  if (left || right || top || bot) {
+    arena.in_bounds = false;
+  }
+}

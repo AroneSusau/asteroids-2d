@@ -9,6 +9,7 @@ class Particle_t {
     float y = 0;
     float dx = 0;
     float dy = 0;
+    float size = 1;
     float rotation = 0;
 
     // Time

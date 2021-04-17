@@ -11,6 +11,10 @@ static class util_t {
     }
 
     float random(int min, int max) {
+      
+      if (max == 0)
+        return min;
+      
       return (rand() % max) + min;
     }
 

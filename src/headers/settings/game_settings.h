@@ -7,10 +7,22 @@ class arena_t {
   public:
     
     bool in_bounds = true;
+    bool player_alive = true;
+    bool game_over = false;
 
+    // Positions & Size
     float width = 1500;
     float height = 1500;
     float margin = 0.1;
+
+    // Asteroid Spawns
+    float next_wave = 0;
+    float wave_interval = 10;
+    float spawn = 1;
+    float spawn_increment = 2;
+    float spawn_radius = sqrt(pow(width, 2) + pow(height, 2));
+    float player_points = 0;
+    float time = 0;
 
     void resize(float o_width, float o_height);
 

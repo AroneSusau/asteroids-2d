@@ -24,6 +24,11 @@ static class spaceship_t {
 
     float bound_radius = 28.28;
     
+    // Pew Pew Stuff
+    float fire_rate = 0.05;
+    float next_fire = 0;
+    float damage = 10;
+
     // Size
     float size = 20;
     float padding = 8;
@@ -32,6 +37,7 @@ static class spaceship_t {
     bool forward = false;
     bool left = false;
     bool right = false;
+    bool firing = false;
 
     // Fill & colour
     float fill_colour [3] = { 0.0, 1.0, 0.0 };
@@ -48,12 +54,12 @@ static class spaceship_t {
       ship_flames.active = true;
       ship_flames.tag = ship_trail;
       ship_flames.duration_type = continuous;
-      ship_flames.particle_lifetime = 0.07;
+      ship_flames.particle_lifetime = 0.1;
       ship_flames.spread_min = 0;
       ship_flames.spread_max = 40;
-      ship_flames.rate = 0.2;
-      ship_flames.density = 6;
-      ship_flames.size = 6;
+      ship_flames.rate = 0.4;
+      ship_flames.density = 15;
+      ship_flames.size = 10;
 
       ship_flames.x = x;
       ship_flames.y = y;
@@ -64,15 +70,15 @@ static class spaceship_t {
       ship_flames.y_max = 0;
 
       ship_flames.dx_min = velocity_max;
-      ship_flames.dx_max = velocity_max * 3;
+      ship_flames.dx_max = velocity_max * 2;
       ship_flames.dy_min = velocity_max;
-      ship_flames.dy_max = velocity_max * 3;
+      ship_flames.dy_max = velocity_max * 2;
 
       ship_flames.rotation = rotation;
 
       ship_flames.start_colour[0] = 1;
       ship_flames.start_colour[1] = 0;
-      ship_flames.start_colour[2] = 1;
+      ship_flames.start_colour[2] = 0.3;
 
       ship_flames.gradient_colour[0] = 1;
       ship_flames.gradient_colour[1] = 1;
@@ -96,6 +102,15 @@ static class spaceship_t {
 
       dx = 0;
       dy = 0;      
+    }
+
+    void update_trail(ParticleGenerator &generator) {
+      generator.active = forward;
+      generator.x = x;
+      generator.x_min = x;
+      generator.y = y;
+      generator.y_min = y;
+      generator.rotation = rotation;
     }
 
 } spaceship;

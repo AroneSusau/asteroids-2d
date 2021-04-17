@@ -18,6 +18,13 @@ static class util_t {
       return (rand() % max) + min;
     }
 
+    float hypo(float x1, float y1, float x2, float y2) {
+      float a = y1 - y2;
+      float b = x1 - x2;
+
+      return sqrt(pow(a, 2) + pow(b, 2));
+    }
+
 } util;
 
 #endif

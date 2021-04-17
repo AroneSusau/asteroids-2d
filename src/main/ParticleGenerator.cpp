@@ -6,11 +6,11 @@ void ParticleGenerator::create_particle() {
   
     particle.x = util.random(x_min, x_max);
     particle.y = util.random(y_min, y_max);
-    particle.dx = util.random(dx_min, dx_max);
-    particle.dy = util.random(dy_min, dy_max);
+    particle.rotation = util.random(spread_min, spread_max) - spread_max/2;
+    particle.dx = util.random(dx_min, dx_max) * cosf(util.deg_to_rad(particle.rotation));
+    particle.dy = util.random(dy_min, dy_max) * sinf(util.deg_to_rad(particle.rotation));
     particle.lifetime = particle_lifetime;
     particle.remaining = particle_lifetime;
-    particle.rotation = util.random(spread_min, spread_max) - spread_max/2;
     particle.size = size;
     particle.colour[0] = start_colour[0];
     particle.colour[1] = start_colour[1];
@@ -31,8 +31,8 @@ void ParticleGenerator::movement(float dt) {
     if (particle.remaining <= 0) {
       particles.erase(particles.begin() + i);
     } else {
-      particle.x -= particle.dx * cosf(util.deg_to_rad(particle.rotation));
-      particle.y -= particle.dy * sinf(util.deg_to_rad(particle.rotation));
+      particle.x -= particle.dx;
+      particle.y -= particle.dy;
       particle.size *= 0.6; 
     }
   }

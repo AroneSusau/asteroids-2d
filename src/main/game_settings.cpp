@@ -13,6 +13,8 @@ void arena_t::resize(float o_width, float o_height) {
     this->height *= aspect/o_aspect;
   }
 
+  spawn_radius = sqrt(pow(width, 2) + pow(height, 2));
+
 }
 
 void game_window_t::resize(float width, float height) {

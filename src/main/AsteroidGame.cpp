@@ -79,40 +79,12 @@ void AsteroidGame::update_particle_generators(float dt) {
 
 void AsteroidGame::init_game_objs() {
 
-  spaceship.reset(arena);
-  particles_generators.clear();  
-  arena.in_bounds = true;
-
-  ParticleGenerator stars;
-
-  stars.active = true;
-  stars.duration_type = continuous;
-  stars.particle_lifetime = 20;
-  stars.spread_min = 90;
-  stars.spread_max = 90;
-  stars.rotation = 0;
-  stars.rate = 0.2;
-  stars.density = 3;
-  stars.size = 3;
-
-  stars.x = arena.width/2;
-  stars.y = arena.height/2;
-
-  stars.x_min = 0;
-  stars.y_min = arena.height;
-
-  stars.x_max = arena.width;
-  stars.y_max = arena.height;
-
-  stars.dx_min = 0;
-  stars.dx_max = 0;
-  stars.dy_min = 4;
-  stars.dy_max = 4;
-
-  particles_generators.push_back(stars);
-
   // Set initial time
   physics.time = glutGet(GLUT_ELAPSED_TIME) / 1000;
+
+  // Default settings
+  spaceship.reset(arena);
+  arena.in_bounds = true;
 
   // Set default variables for graphics renderer
   graphics.arena = arena;
@@ -125,7 +97,14 @@ void AsteroidGame::init_game_objs() {
   walls[2].setPoints(arena.width - padding, arena.height - padding, padding, arena.height - padding);
   walls[3].setPoints(padding, arena.height - padding, padding, padding);
 
-  // Ship Particle Generator
+  // Default Particle Generators
+  for (size_t i = 0; i < particles_generators.size(); ++i) {
+    if (particles_generators.at(i).tag != environment) {
+      particles_generators.erase(particles_generators.begin() + i);
+    }
+  }
+
+  particles_generators.push_back(arena.default_stars());
   particles_generators.push_back(spaceship.default_trail());
 }
 

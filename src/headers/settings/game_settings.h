@@ -1,6 +1,8 @@
 #ifndef H_GAME_SETTINGS
 #define H_GAME_SETTINGS
 
+#include "../classes/ParticleGenerator.h"
+
 class arena_t {
   public:
     
@@ -11,6 +13,37 @@ class arena_t {
     float margin = 0.1;
 
     void resize(float o_width, float o_height);
+
+    ParticleGenerator default_stars() {
+      ParticleGenerator stars;
+
+      stars.active = true;
+      stars.tag = environment;
+      stars.duration_type = continuous;
+      stars.particle_lifetime = 20;
+      stars.spread_min = 90;
+      stars.spread_max = 90;
+      stars.rotation = 0;
+      stars.rate = 0.2;
+      stars.density = 1;
+      stars.size = 3;
+
+      stars.x = width/2;
+      stars.y = height/2;
+
+      stars.x_min = 0;
+      stars.y_min = height;
+
+      stars.x_max = width;
+      stars.y_max = height;
+
+      stars.dx_min = 0;
+      stars.dx_max = 0;
+      stars.dy_min = 4;
+      stars.dy_max = 4;
+
+      return stars;
+    }
 
 };
 

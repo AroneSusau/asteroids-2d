@@ -6,7 +6,7 @@
 #include "./Util.h"
 
 typedef enum { discrete, continuous } duration_t;
-typedef enum { ship_trail, asteroid_burst, misc } generator_t;
+typedef enum { ship_trail, asteroid_burst, misc, environment } generator_t;
 
 class ParticleGenerator {
   public:

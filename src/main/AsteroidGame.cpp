@@ -2,6 +2,9 @@
 #include "../headers/classes/GraphicsRenderer.h"
 #include "../headers/classes/Spaceship.h"
 #include "../headers/classes/Physics.h"
+#include "../headers/classes/ParticleGenerator.h"
+
+std::vector<ParticleGenerator> particles_generators;
 
 Wall walls [4];
 arena_t arena;
@@ -32,13 +35,45 @@ void AsteroidGame::init(int argc, char** argv) {
 
 void AsteroidGame::on_idle() {
 
+  physics.cur_time = glutGet(GLUT_ELAPSED_TIME) / 1000.0;
+  float dt = physics.cur_time - physics.time;
+
   physics.move_ship(spaceship);
   physics.ship_wall_warning(spaceship, walls, arena);
+
+  update_particle_generators(dt);
 
   glutPostRedisplay();
 }
 
+void AsteroidGame::update_particle_generators(float dt) {
+  for (size_t i = 0; i < particles_generators.size(); ++i) {
+    ParticleGenerator &generator = particles_generators.at(i);
+    
+    if (generator.tag == ship_trail) {
+      generator.active = spaceship.forward;
+      generator.x = spaceship.x;
+      generator.y = spaceship.y;
+      generator.rotation = spaceship.rotation;
+    }
+
+    generator.update_lifetime(dt);
+    generator.movement(dt);
+
+    if (generator.active) {
+      
+      generator.spawn(dt);
+
+    } else if (generator.tag != ship_trail) {
+      particles_generators.erase(particles_generators.begin() + i);  
+    }
+  }
+}
+
 void AsteroidGame::init_game_objs() {
+
+  // Set initial time
+  physics.time = glutGet(GLUT_ELAPSED_TIME) / 1000;
 
   // Set default variables for graphics renderer
   graphics.arena = arena;
@@ -54,6 +89,9 @@ void AsteroidGame::init_game_objs() {
   walls[1].setPoints(arena.width - padding, padding, arena.width - padding, arena.height - padding);
   walls[2].setPoints(arena.width - padding, arena.height - padding, padding, arena.height - padding);
   walls[3].setPoints(padding, arena.height - padding, padding, padding);
+
+  // Ship Particle Generator
+  particles_generators.push_back(spaceship.default_trail());
 }
 
 void AsteroidGame::display() {
@@ -65,6 +103,10 @@ void AsteroidGame::display() {
   graphics.walls(walls);
   graphics.spaceship(spaceship);
 
+  for (size_t i = 0; i < particles_generators.size(); ++i) {
+    particles_generators.at(i).render();
+  }
+
   int err;
   if ((err = glGetError()) != GL_NO_ERROR)
     fprintf(stderr, "Error: %s\n", gluErrorString(err));
@@ -74,8 +116,8 @@ void AsteroidGame::display() {
 
 void AsteroidGame::on_reshape(int w, int h) {
   
-  game_window.resize(w, h);
   glViewport(0, 0, w, h);
+  game_window.resize(w, h);
   arena.resize(w, h);
 
   glMatrixMode(GL_PROJECTION);

@@ -10,9 +10,14 @@
 class Physics_t {
 
   public:
+    float time = 0;
+    float cur_time = 0;
+
     void move_ship(spaceship_t &spaceship);
 
     void ship_wall_warning(spaceship_t &spaceship, Wall walls [4], arena_t arena);
+
+    void ship_wall_collision(spaceship_t &spaceship, Wall walls [4], arena_t arena);
 
 };
 

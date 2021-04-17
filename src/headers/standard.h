@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <iostream>
+#include <vector>
 
 #if _WIN32
 #include <windows.h>

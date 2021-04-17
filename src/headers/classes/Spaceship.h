@@ -1,6 +1,8 @@
 #ifndef H_SPACESHIP
 #define H_SPACESHIP
 
+#include "./ParticleGenerator.h"
+
 typedef enum { solid, wireframe } ship_fill;
 
 static class spaceship_t {
@@ -11,10 +13,10 @@ static class spaceship_t {
     float y;
     float dx = 0;
     float dy = 0;
-    float velocity_max = 7;
-    float rotation_max = 3;
-    float acceleration = 0.4;
-    float r_acceleration = 0.2;
+    float velocity_max = 10;
+    float rotation_max = 15;
+    float acceleration = 6;
+    float r_acceleration = 5;
 
     float rotation = 0;
     float dr = 0;
@@ -37,7 +39,42 @@ static class spaceship_t {
     ship_fill fill_style = wireframe;
 
     // Debug
-    bool debug_bounds = true;
+    bool debug_bounds = false;
+
+    ParticleGenerator default_trail() {
+      ParticleGenerator ship_flames;
+      
+      ship_flames.active = true;
+      ship_flames.tag = ship_trail;
+      ship_flames.duration_type = continuous;
+      ship_flames.particle_lifetime = 0.07;
+      ship_flames.spread = 40;
+      ship_flames.rate = 0.2;
+      ship_flames.density = 6;
+
+      ship_flames.x = x;
+      ship_flames.y = y;
+
+      ship_flames.dx_min = velocity_max;
+      ship_flames.dx_max = velocity_max * 3;
+      ship_flames.dy_min = velocity_max;
+      ship_flames.dy_max = velocity_max * 3;
+
+      ship_flames.rotation = rotation;
+
+      ship_flames.start_colour[0] = 1;
+      ship_flames.start_colour[1] = 0;
+      ship_flames.start_colour[2] = 0.9;
+
+      ship_flames.gradient_colour[0] = 1;
+      ship_flames.gradient_colour[1] = 1;
+      ship_flames.gradient_colour[2] = 0;
+
+      ship_flames.offset_x = -size/8;
+
+      return ship_flames;
+    }
+
 } spaceship;
 
 #endif

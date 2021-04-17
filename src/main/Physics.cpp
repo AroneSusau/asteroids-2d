@@ -1,10 +1,11 @@
 #include "../headers/classes/Physics.h"
 
 void Physics_t::move_ship(spaceship_t &spaceship) {
+  float dt = cur_time - time;
   float rads = util.deg_to_rad(spaceship.rotation);
-  float x_accl = cos(rads) * spaceship.acceleration;
-  float y_accl = sin(rads) * spaceship.acceleration;
-  float r_accl = spaceship.r_acceleration;
+  float x_accl = cos(rads) * spaceship.acceleration * dt;
+  float y_accl = sin(rads) * spaceship.acceleration * dt;
+  float r_accl = spaceship.r_acceleration * dt;
 
   if (spaceship.dx > spaceship.velocity_max) {
     spaceship.dx = spaceship.velocity_max;
@@ -44,17 +45,14 @@ void Physics_t::move_ship(spaceship_t &spaceship) {
   }
 
   if (!spaceship.left && !spaceship.right) {
-    if (spaceship.dr > 0) {
-      spaceship.dr -= r_accl * 0.8;
-    } else if (spaceship.dr < 0) {
-      spaceship.dr += r_accl * 0.8;
-    }
+    spaceship.dr *= 0.7;
   }
 
   spaceship.rotation += spaceship.dr;
   spaceship.x += spaceship.dx;
   spaceship.y += spaceship.dy;
 
+  time = cur_time;
 }
 
 void Physics_t::ship_wall_warning(spaceship_t &spaceship, Wall walls [4], arena_t arena) {

@@ -10,6 +10,10 @@ static class util_t {
       return deg * M_PI / 180.0f;
     }
 
+    float random(int min, int max) {
+      return (rand() % max) + min;
+    }
+
 } util;
 
 #endif

@@ -32,7 +32,8 @@ class Physics_t {
 
     void blackhole_to_asteroid_collision(BlackHole hole, std::vector<Asteroid> &asteroids, std::vector<ParticleGenerator> &particles_generators);
     void blackhole_to_ship_collision(BlackHole hole, spaceship_t &spaceship, arena_t &arena);
-    void blackhole_pull_effect(BlackHole hole, spaceship_t &spaceship, std::vector<Asteroid> &asteroids);
+    void blackhole_to_bullets_collision(BlackHole hole, std::vector<Bullet> &bullets);
+    void blackhole_pull_effect(BlackHole hole, spaceship_t &spaceship, std::vector<Bullet> &bullets, std::vector<Asteroid> &asteroids);
     
     float elastic_collsion(float dv1, float dv2, float m1, float m2);
     bool circlular_collision(float x1, float y1, float r1, float x2, float y2, float r2);

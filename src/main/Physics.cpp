@@ -105,7 +105,7 @@ void Physics_t::move_bullet(std::vector<Bullet> &bullets, arena_t &arena) {
     if (!bullet.in_bounds) {
       bullets.erase(bullets.begin() + i);
     }
-  }  
+  }   
 }
 
 void Physics_t::bullet_asteroid_collision(std::vector<Bullet> &bullets, std::vector<Asteroid> &asteroids, std::vector<ParticleGenerator> &particles_generators, arena_t &arena) {
@@ -313,7 +313,17 @@ bool Physics_t::circlular_collision(float x1, float y1, float r1, float x2, floa
   return hypo < bounds;
 }
 
-void Physics_t::blackhole_pull_effect(BlackHole hole, spaceship_t &spaceship, std::vector<Asteroid> &asteroids) {
+void Physics_t::blackhole_to_bullets_collision(BlackHole hole, std::vector<Bullet> &bullets) {
+  for (size_t i = 0; i < bullets.size(); ++i) {
+    Bullet &bullet = bullets.at(i);
+    
+    if (circlular_collision(hole.x, hole.y, hole.size, bullet.x, bullet.y, 0)) {
+      bullets.erase(bullets.begin() + i);
+    }
+  }
+}
+
+void Physics_t::blackhole_pull_effect(BlackHole hole, spaceship_t &spaceship, std::vector<Bullet> &bullets, std::vector<Asteroid> &asteroids) {
 
   float hypo = util.hypo(hole.x, hole.y, spaceship.x, spaceship.y);
   float soh = (hole.y - spaceship.y) / hypo;
@@ -324,6 +334,17 @@ void Physics_t::blackhole_pull_effect(BlackHole hole, spaceship_t &spaceship, st
 
   for (size_t i = 0; i < asteroids.size(); ++i) {
     Asteroid &a = asteroids.at(i);
+    
+    float hypo = util.hypo(hole.x, hole.y, a.x, a.y);
+    float soh = (hole.y - a.y) / hypo;
+    float cah = (hole.x - a.x) / hypo;
+    
+    a.dx += hole.pull_x * cosf(acos(cah)) * sqrt(M_PI / hypo);
+    a.dy += hole.pull_y * sinf(asinf(soh)) * sqrt(M_PI / hypo);
+  }
+
+  for (size_t i = 0; i < bullets.size(); ++i) {
+    Bullet &a = bullets.at(i);
     
     float hypo = util.hypo(hole.x, hole.y, a.x, a.y);
     float soh = (hole.y - a.y) / hypo;

@@ -10,6 +10,7 @@
 #include "classes/Asteroid.h"
 #include "classes/ParticleGenerator.h"
 #include "classes/Bullet.h"
+#include "classes/Blackhole.h"
 
 class AsteroidGame {
   

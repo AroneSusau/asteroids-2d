@@ -12,10 +12,10 @@ static class util_t {
 
     float random(int min, int max) {
       
-      if (max == 0)
+      if (max == 0 || max - min == 0)
         return min;
       
-      return (rand() % max) + min;
+      return (rand() % (max - min)) + min;
     }
 
     float hypo(float x1, float y1, float x2, float y2) {

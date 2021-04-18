@@ -8,6 +8,7 @@
 #include "./Asteroid.h"
 #include "./Bullet.h"
 #include "./Wall.h"
+#include "./Blackhole.h"
 
 class GraphicsRenderer_t {
   
@@ -20,8 +21,11 @@ class GraphicsRenderer_t {
     void spaceship(spaceship_t spaceship);
     void asteroids(std::vector<Asteroid> asteroids);
     void bullets(std::vector<Bullet> bullets);
+    void blackhole(BlackHole hole);
 
     void hud(arena_t arena);
+    void start_screen(arena_t arena);
+    void game_over(arena_t arena);
 
     void debug_line(float x1, float x2, float y1, float y2);
 

@@ -25,7 +25,7 @@ static class spaceship_t {
     float bound_radius = 28.28;
     
     // Pew Pew Stuff
-    float fire_rate = 0.05;
+    float fire_rate = 0.25;
     float next_fire = 0;
     float damage = 10;
 
@@ -94,9 +94,10 @@ static class spaceship_t {
       forward = false;
       left = false;
       right = false;
+      firing = false;
 
-      x = (rand() % (int) (arena.width / 4)) + arena.width/10;
-      y = (rand() % (int) (arena.height / 4)) + arena.width/10;
+      x = (rand() % (int) (arena.width / 4)) + arena.width/9;
+      y = (rand() % (int) (arena.height / 4)) + arena.height/9;
 
       rotation = 45;
 

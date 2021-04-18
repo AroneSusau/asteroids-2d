@@ -9,6 +9,7 @@ class arena_t {
     bool in_bounds = true;
     bool player_alive = true;
     bool game_over = false;
+    bool game_started = false;
 
     // Positions & Size
     float width = 1500;
@@ -23,6 +24,7 @@ class arena_t {
     float spawn_radius = sqrt(pow(width, 2) + pow(height, 2));
     float player_points = 0;
     float time = 0;
+    float asteroid_start_screen_limit = 10;
 
     void resize(float o_width, float o_height);
 
@@ -32,13 +34,13 @@ class arena_t {
       stars.active = true;
       stars.tag = environment;
       stars.duration_type = continuous;
-      stars.particle_lifetime = 20;
+      stars.particle_lifetime = 15;
       stars.spread_min = 90;
       stars.spread_max = 90;
       stars.rotation = 0;
       stars.rate = 0.2;
       stars.density = 1;
-      stars.size = 3;
+      stars.size = 1;
 
       stars.x = width/2;
       stars.y = height/2;
@@ -51,8 +53,8 @@ class arena_t {
 
       stars.dx_min = 0;
       stars.dx_max = 0;
-      stars.dy_min = 4;
-      stars.dy_max = 4;
+      stars.dy_min = 5;
+      stars.dy_max = 0;
 
       return stars;
     }

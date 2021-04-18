@@ -4,6 +4,8 @@ std::vector<ParticleGenerator> particles_generators;
 std::vector<Asteroid> asteroids;
 std::vector<Bullet> bullets;
 
+BlackHole blackhole;
+
 Wall walls [4];
 arena_t arena;
 game_window_t game_window;
@@ -30,6 +32,9 @@ void AsteroidGame::init(int argc, char** argv) {
 
   glutIdleFunc(AsteroidGame::on_idle);
 
+  spaceship.x = arena.width/2;
+  spaceship.y = arena.height/2;
+
 }
 
 void AsteroidGame::on_mouse_event(int button, int state, int x, int y) {
@@ -37,10 +42,6 @@ void AsteroidGame::on_mouse_event(int button, int state, int x, int y) {
     spaceship.firing = true;
   } else if (button == keys.MOUSE_1 && state == keys.MOUSE_UP) {
     spaceship.firing = false;
-  }
-
-  if (button == 2 && state == 0) {
-    generate_asteroid();
   }
 }
 
@@ -50,36 +51,51 @@ void AsteroidGame::generate_asteroid() {
   float x_range = util.random(0, arena.spawn_radius - arena.width);
   float y_range = util.random(0, arena.spawn_radius - arena.height);
 
-  asteroid.size = util.random(30, 60);
+  asteroid.size = util.random(asteroid.min_size, asteroid.max_size);
   asteroid.initial_health = asteroid.size * 5;
   asteroid.health = asteroid.initial_health;
   asteroid.points = asteroid.size * 10;
 
-  asteroid.bound_radius = asteroid.size;
-  asteroid.x = rand() % 2 == 0 ? -x_range : x_range + arena.width;
-  asteroid.y = rand() % 2 != 0 ? -y_range : y_range + arena.height;
+  asteroid.bound_radius = asteroid.size * 0.8;
+  
+  bool findingStart = true;
 
-  // DELETE ME
-  // asteroid.x = arena.width/2;
-  // asteroid.y = arena.height/2;
-  // DELETE ME
+  while (findingStart) {
+    asteroid.x = rand() % 2 == 0 ? -x_range : x_range + arena.width;
+    asteroid.y = rand() % 2 != 0 ? -y_range : y_range + arena.height;
+    
+    if (!asteroids.empty()) {
+      for (size_t i = 0; i < asteroids.size(); ++i) {
+        Asteroid other = asteroids.at(i);
+        bool match = physics.circlular_collision(
+          asteroid.x, 
+          asteroid.y, 
+          asteroid.bound_radius, 
+          other.x, 
+          other.y, 
+          other.bound_radius);
+
+        if (!match && i == asteroids.size() - 1) {
+          findingStart = false;
+        }
+      }
+    } else {
+      findingStart = false;
+    }
+  }
 
   asteroid.dr = util.random(1, 5);
   
   for (int i = 0; i < asteroid.edge_points; ++i) {
-    asteroid.edge_variation[i] = util.random(60, 100) / 100;
+    asteroid.edge_variation[i] = util.random(40, 100) / 100;
   }
 
   float soh = (asteroid.y - spaceship.y) / util.hypo(asteroid.x, asteroid.y, spaceship.x, spaceship.y);
   float cah = (asteroid.x - spaceship.x) / util.hypo(asteroid.x, asteroid.y, spaceship.x, spaceship.y);
-
-  asteroid.dx = util.random(asteroid.velocity_min, asteroid.velocity_max) * -cosf(acos(cah));
-  asteroid.dy = util.random(asteroid.velocity_min, asteroid.velocity_max) * -sinf(asinf(soh));
-
-  // DELETE ME
-  // asteroid.dx = -2;
-  // asteroid.dy = -2;
-  // DELETE ME
+  float rand_vel = util.random(asteroid.velocity_min, asteroid.velocity_max);
+  
+  asteroid.dx = rand_vel * -cosf(acos(cah));
+  asteroid.dy = rand_vel * -sinf(asinf(soh));
 
   asteroid.r_direction = rand() % 2 == 0 ? clockwise : counter_clockwise;
  
@@ -89,26 +105,48 @@ void AsteroidGame::generate_asteroid() {
 void AsteroidGame::on_idle() {
 
   physics.cur_time = glutGet(GLUT_ELAPSED_TIME) / 1000.0;
-  arena.time = physics.cur_time;
   float dt = physics.cur_time - physics.time;
+  
+  if (arena.game_started && !arena.game_over) {
+    arena.time += dt;
+  }
 
   physics.move_ship(spaceship);
   physics.move_asteroids(asteroids, arena);
   physics.move_bullet(bullets, arena);
+  physics.move_black_hole_rings(blackhole, dt);
   
   physics.ship_wall_warning(spaceship, walls, arena);
   physics.ship_wall_collision(spaceship, arena);
   physics.asteroids_wall_collision(asteroids, arena);
-  physics.ship_asteroid_collision(asteroids, spaceship, arena);
-  physics.bullet_asteroid_collision(bullets, asteroids, particles_generators, arena);
+  physics.asteroid_to_asteroid_collision(asteroids);
+
+  physics.blackhole_to_ship_collision(blackhole, spaceship, arena);
+  physics.blackhole_to_asteroid_collision(blackhole, asteroids, particles_generators);
+  
+  if (arena.game_started && !arena.game_over) {
+    physics.ship_asteroid_collision(asteroids, spaceship, arena);
+    physics.bullet_asteroid_collision(bullets, asteroids, particles_generators, arena);
+  }
 
   update_particle_generators(dt);
 
-  spawn_asteroids(dt);
+  if ((arena.game_started && !arena.game_over) || (!arena.game_started && asteroids.size() < arena.asteroid_start_screen_limit)) {
+    spawn_asteroids(dt);
+  }
+  
   spawn_bullets(dt);
 
-  if (!arena.in_bounds || !arena.player_alive) {
-    init_game_objs();
+  if ((!arena.in_bounds || !arena.player_alive)) {
+    
+    if (!arena.game_started) {
+
+    } else if (!arena.game_over) {
+      init_game_objs();
+    } else {
+      spaceship.x = arena.width/2;
+      spaceship.y = arena.height/2;
+    }
   }
 
   glutPostRedisplay();
@@ -153,8 +191,10 @@ void AsteroidGame::update_particle_generators(float dt) {
   for (size_t i = 0; i < particles_generators.size(); ++i) {
     ParticleGenerator &generator = particles_generators.at(i);
     
-    if (generator.tag == ship_trail) {
+    if (generator.tag == ship_trail && !arena.game_over) {
       spaceship.update_trail(generator);
+    } else if (generator.tag == ship_trail && arena.game_over) {
+      particles_generators.erase(particles_generators.begin() + i);
     }
 
     generator.update_lifetime(dt);
@@ -177,10 +217,18 @@ void AsteroidGame::init_game_objs() {
 
   // Default settings
   spaceship.reset(arena);
+  blackhole = blackhole.default_blackhole();
+  
   arena.in_bounds = true;
   arena.player_alive = true;
   arena.next_wave = 0;
   arena.spawn = 1;
+  arena.time = 0;
+  arena.player_points = 0;
+
+  // Setup blackhole
+  blackhole.x = util.random(arena.width/4 + - blackhole.size, arena.width - blackhole.size);
+  blackhole.y = util.random(arena.height/4 + blackhole.size, arena.height - blackhole.size);
 
   // Set default variables for graphics renderer
   graphics.arena = arena;
@@ -203,8 +251,8 @@ void AsteroidGame::init_game_objs() {
   asteroids.clear();
   bullets.clear();
 
-  particles_generators.push_back(arena.default_stars());
   particles_generators.push_back(spaceship.default_trail());
+  particles_generators.push_back(blackhole.default_particle_generator());
 }
 
 void AsteroidGame::display() {
@@ -220,10 +268,18 @@ void AsteroidGame::display() {
 
   // General rendering
   graphics.walls(walls);
-  graphics.spaceship(spaceship);
   graphics.asteroids(asteroids);
-  graphics.bullets(bullets);
-  graphics.hud(arena);
+  graphics.blackhole(blackhole);
+
+  if (arena.game_started && !arena.game_over) {
+    graphics.spaceship(spaceship);
+    graphics.bullets(bullets);
+    graphics.hud(arena);
+  } else if (!arena.game_started) {
+    graphics.start_screen(arena);
+  } else if (arena.game_started && arena.game_over) {
+    graphics.game_over(arena);
+  } 
 
   int err;
   if ((err = glGetError()) != GL_NO_ERROR)
@@ -243,33 +299,43 @@ void AsteroidGame::on_reshape(int w, int h) {
 
   glOrtho(0.0, arena.width, 0.0, arena.height, -1, 1);
   
-  init_game_objs();
+  particles_generators.push_back(arena.default_stars());
 }
 
 void AsteroidGame::on_key_press(unsigned char key, int x, int y) {
-  if (key == keys.W) {
-    spaceship.forward = true;
-  } else if (key == keys.A) {
-    spaceship.left = true;
-  } else if (key == keys.D) {
-    spaceship.right = true;
-  } else if (key == keys.SPACE) {
-    spaceship.firing = true;
-  } else if (key == keys.ESC) {
+  if (arena.game_started && !arena.game_over) {
+    if (key == keys.W) {
+      spaceship.forward = true;
+    } else if (key == keys.A) {
+      spaceship.left = true;
+    } else if (key == keys.D) {
+      spaceship.right = true;
+    } else if (key == keys.SPACE) {
+      spaceship.firing = true;
+    }
+  } else {
+    arena.game_started = true;
+    arena.game_over = false;
+    init_game_objs();
+  }
+
+  if (key == keys.ESC) {
     exit(EXIT_SUCCESS);
   }
 }
 
 void AsteroidGame::on_key_release(unsigned char key, int x, int y) {
-  if (key == keys.W) {
-    spaceship.forward = false;
-  } else if (key == keys.A) {
-    spaceship.left = false;
-  } else if (key == keys.D) {
-    spaceship.right = false;
-  } else if (key == keys.SPACE) {
-    spaceship.firing = false;
-  } 
+  if (arena.game_started && !arena.game_over) {
+    if (key == keys.W) {
+      spaceship.forward = false;
+    } else if (key == keys.A) {
+      spaceship.left = false;
+    } else if (key == keys.D) {
+      spaceship.right = false;
+    } else if (key == keys.SPACE) {
+      spaceship.firing = false;
+    } 
+  }
 }
 
 AsteroidGame::AsteroidGame(/* args */)

@@ -8,6 +8,7 @@
 #include <string.h>
 #include <iostream>
 #include <vector>
+#include <string>
 
 #if _WIN32
 #include <windows.h>

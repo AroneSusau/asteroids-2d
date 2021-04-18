@@ -17,8 +17,8 @@ class BlackHole {
     float y = 0;
     float dr = 2;
     float d_growth = 40;
-    float pull_x = 0;
-    float pull_y = 0;
+    float pull_x = 1;
+    float pull_y = 1;
     
     // Rings
     float size = 140;
@@ -75,8 +75,6 @@ class BlackHole {
       generator.dx_max = 25;
       generator.dy_min = 5;
       generator.dy_max = 25;
-
-      // generator.rotation = rotation;
 
       float red1 = util.random(4, 8) / 10;
       float green1 = util.random(2, 10) / 10;

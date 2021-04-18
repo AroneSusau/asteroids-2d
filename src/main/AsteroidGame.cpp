@@ -123,6 +123,7 @@ void AsteroidGame::on_idle() {
 
   physics.blackhole_to_ship_collision(blackhole, spaceship, arena);
   physics.blackhole_to_asteroid_collision(blackhole, asteroids, particles_generators);
+  physics.blackhole_pull_effect(blackhole, spaceship, asteroids);
   
   if (arena.game_started && !arena.game_over) {
     physics.ship_asteroid_collision(asteroids, spaceship, arena);

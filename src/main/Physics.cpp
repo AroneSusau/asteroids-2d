@@ -312,3 +312,25 @@ bool Physics_t::circlular_collision(float x1, float y1, float r1, float x2, floa
 
   return hypo < bounds;
 }
+
+void Physics_t::blackhole_pull_effect(BlackHole hole, spaceship_t &spaceship, std::vector<Asteroid> &asteroids) {
+
+  float hypo = util.hypo(hole.x, hole.y, spaceship.x, spaceship.y);
+  float soh = (hole.y - spaceship.y) / hypo;
+  float cah = (hole.x - spaceship.x) / hypo;
+  
+  spaceship.dx += hole.pull_x * cosf(acos(cah)) * sqrt(M_PI / hypo);
+  spaceship.dy += hole.pull_y * sinf(asinf(soh)) * sqrt(M_PI / hypo);
+
+  for (size_t i = 0; i < asteroids.size(); ++i) {
+    Asteroid &a = asteroids.at(i);
+    
+    float hypo = util.hypo(hole.x, hole.y, a.x, a.y);
+    float soh = (hole.y - a.y) / hypo;
+    float cah = (hole.x - a.x) / hypo;
+    
+    a.dx += hole.pull_x * cosf(acos(cah)) * sqrt(M_PI / hypo);
+    a.dy += hole.pull_y * sinf(asinf(soh)) * sqrt(M_PI / hypo);
+  }
+
+}

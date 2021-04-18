@@ -289,6 +289,36 @@ void AsteroidGame::display() {
   glutSwapBuffers();
 }
 
+void AsteroidGame::spawn_inital_stars() {
+  if (!particles_generators.empty()) {
+    for (size_t i = 0; i < particles_generators.size(); ++i) {
+      ParticleGenerator &generator = particles_generators.at(i);
+    
+      if (generator.tag == environment) {
+        float old_x_min = generator.x_min;
+        float old_x_max = generator.x_max;
+        float old_y_min = generator.y_min;
+        float old_y_max = generator.y_max;
+
+        generator.x_min = 0;
+        generator.x_max = arena.width;
+        generator.y_min = 0;
+        generator.y_max = arena.height;
+
+        for (int i = 0; i < 300; ++i) {
+          generator.create_particle();
+        }
+
+        generator.x_min = old_x_min;
+        generator.x_max = old_x_max;
+        generator.y_min = old_y_min;
+        generator.y_max = old_y_max;
+        
+      }
+    }
+  }
+}
+
 void AsteroidGame::on_reshape(int w, int h) {
   
   glViewport(0, 0, w, h);
@@ -301,6 +331,7 @@ void AsteroidGame::on_reshape(int w, int h) {
   glOrtho(0.0, arena.width, 0.0, arena.height, -1, 1);
   
   particles_generators.push_back(arena.default_stars());
+  spawn_inital_stars();
 }
 
 void AsteroidGame::on_key_press(unsigned char key, int x, int y) {

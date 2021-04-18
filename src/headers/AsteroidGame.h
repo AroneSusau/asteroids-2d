@@ -32,6 +32,7 @@ class AsteroidGame {
 
     static void spawn_asteroids(float dt);
     static void spawn_bullets(float dt);
+    static void spawn_inital_stars();
     static void generate_asteroid();
 
     static void display();

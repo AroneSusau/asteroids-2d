@@ -26,7 +26,6 @@ $ make
 ```
 
 # Summary
-
 ## Attempted Tasks
 ### Level 1 Features
 - [x] Screen Mode

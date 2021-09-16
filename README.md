@@ -13,10 +13,7 @@ Thank you in advance.
 
 # Demo Reel
 
-<video width="320" height="240" controls>
-  <source src="https://aronesusau.com/asteroids2d.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+You can find a demo of the project [here](https://www.aronesusau.com/asteroids2d.mp4)
 
 # How to Build & Run
 

@@ -11,6 +11,13 @@ The project hasn't been tested on a windows or linux machine, so please if possi
 
 Thank you in advance.
 
+# Demo Reel
+
+<video width="320" height="240" controls>
+  <source src="https://aronesusau.com/asteroids2d.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 # How to Build & Run
 
 Please enter the following command into your terminal or shell application to build the program.
@@ -19,15 +26,6 @@ $ make
 ```
 
 # Summary
-
-## The Elephant In The Room
-I recall you mentioning that you wanted us to do most of the math sections using vector math and calculating the rebound of the asteroids based off of the normal angle and so on.
-
-Unfortunately, my maths is garbage and I'm a computer science student through and through so I've resorted to using non-vector equations to calculate all my velocities, collisions and directions, etc.
-
-I hope this doesn't impact my mark too much but I understand if you'll need to penalise me because of it.
-
-So hopefully my fancy black hole makes up for it. :D
 
 ## Attempted Tasks
 ### Level 1 Features

@@ -13,7 +13,7 @@ Thank you in advance.
 
 # Demo Reel
 
-You can find a demo of the project [here](https://www.aronesusau.com/asteroids2d.mp4)
+You can find a demo of the project [here](https://aronesusau.s3.ap-southeast-2.amazonaws.com/asteroids2d.mp4)
 
 # How to Build & Run
 
